@@ -5,6 +5,7 @@ package logging
 import "log"
 
 // FatalIfError will log the error and exit if it is non-nil.
+// This is useful in particular for non-recoverable errors when starting an application.
 // Note that calls to `defer` will not be triggered by this - no cleanup is done!
 func FatalIfError(err error, extraInfo ...interface{}) {
 	if err != nil {
