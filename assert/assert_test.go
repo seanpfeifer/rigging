@@ -37,10 +37,12 @@ func TestExpectedActual(t *testing.T) {
 		{Name: "int pass", Expected: 12, Actual: 12, Pass: true},
 		{Name: "int fail", Expected: 12, Actual: 42, Pass: false},
 		// Again, remember that types matter!
-		{Name: "int fail", Expected: 12, Actual: int8(12), Pass: false},
+		{Name: "int8 fail", Expected: 12, Actual: int8(12), Pass: false},
 		// ... Even if the "int" is the same size as the system's "int"s, this should STILL fail because they're not the same.
-		{Name: "int fail", Expected: 12, Actual: int32(12), Pass: false},
-		{Name: "int fail", Expected: 12, Actual: int64(12), Pass: false},
+		{Name: "int32 fail", Expected: int(12), Actual: int32(12), Pass: false},
+		{Name: "int64 fail", Expected: int(12), Actual: int64(12), Pass: false},
+		// These are actually the same type, though "12" seems untyped
+		{Name: "int type pass", Expected: 12, Actual: int(12), Pass: true},
 	}
 
 	for i, tc := range c {
@@ -54,15 +56,44 @@ func TestExpectedActual(t *testing.T) {
 func TestExpectedApproxTime(t *testing.T) {
 	t1, t2 := time.Unix(1593934208, 12), time.Unix(1593934208, 12)
 	c := []testCase{
+		// Exactness, with 0 epsilon
 		{Name: "same time struct", Expected: t1, Actual: t1, Pass: true},
 		{Name: "same time", Expected: t1, Actual: t2, Pass: true},
-		{Name: "smaller delta", Expected: t1, Actual: t1.Add(time.Millisecond * 2), Pass: true, Epsilon: time.Millisecond * 3},
-		{Name: "border delta", Expected: t1, Actual: t1.Add(time.Millisecond * 3), Pass: true, Epsilon: time.Millisecond * 3},
-		{Name: "larger delta", Expected: t1, Actual: t1.Add(time.Millisecond * 4), Pass: false, Epsilon: time.Millisecond * 3},
+		// Test cases for the actual time being in the future
+		{Name: "future smaller delta", Expected: t1, Actual: t1.Add(time.Millisecond * 2), Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "future border delta", Expected: t1, Actual: t1.Add(time.Millisecond * 3), Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "future larger delta", Expected: t1, Actual: t1.Add(time.Millisecond * 4), Pass: false, Epsilon: time.Millisecond * 3},
+		// Test cases for the actual time being in the past
+		{Name: "past smaller delta", Expected: t1, Actual: t1.Add(-time.Millisecond * 2), Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "past border delta", Expected: t1, Actual: t1.Add(-time.Millisecond * 3), Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "past larger delta", Expected: t1, Actual: t1.Add(-time.Millisecond * 4), Pass: false, Epsilon: time.Millisecond * 3},
 	}
 
 	for i, tc := range c {
 		pass := ExpectedApproxTime(&tc, tc.Expected.(time.Time), tc.Actual.(time.Time), tc.Epsilon, tc.Name)
+		if pass != tc.Pass {
+			t.Errorf(`[%d] %s failed: "%s"`, i, tc.Name, tc.loggedMessage)
+		}
+	}
+}
+
+func TestExpectedApproxDuration(t *testing.T) {
+	d := time.Millisecond * 12
+	c := []testCase{
+		// Exactness, with 0 epsilon
+		{Name: "same duration", Expected: d, Actual: time.Millisecond * 12, Pass: true},
+		// Test cases for the actual time being in the future
+		{Name: "future smaller delta", Expected: d, Actual: d + time.Millisecond*2, Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "future border delta", Expected: d, Actual: d + time.Millisecond*3, Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "future larger delta", Expected: d, Actual: d + time.Millisecond*4, Pass: false, Epsilon: time.Millisecond * 3},
+		// Test cases for the actual time being in the past
+		{Name: "past smaller delta", Expected: d, Actual: d - time.Millisecond*2, Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "past border delta", Expected: d, Actual: d - time.Millisecond*3, Pass: true, Epsilon: time.Millisecond * 3},
+		{Name: "past larger delta", Expected: d, Actual: d - time.Millisecond*4, Pass: false, Epsilon: time.Millisecond * 3},
+	}
+
+	for i, tc := range c {
+		pass := ExpectedApproxDuration(&tc, tc.Expected.(time.Duration), tc.Actual.(time.Duration), tc.Epsilon, tc.Name)
 		if pass != tc.Pass {
 			t.Errorf(`[%d] %s failed: "%s"`, i, tc.Name, tc.loggedMessage)
 		}
