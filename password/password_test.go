@@ -6,7 +6,6 @@ import (
 )
 
 func TestPasswordHashing(t *testing.T) {
-	const pepperLen = 16
 	var pepper [pepperLen]byte
 	rand.Read(pepper[:])
 
@@ -31,7 +30,6 @@ func TestPasswordHashing(t *testing.T) {
 }
 
 func TestBadPasswordHashing(t *testing.T) {
-	const pepperLen = 16
 	var pepper [pepperLen]byte
 	rand.Read(pepper[:])
 
