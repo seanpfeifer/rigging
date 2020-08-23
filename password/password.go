@@ -1,4 +1,7 @@
 // Package password contains password hashing + verification functionality.
+// TLDR; "just use bcrypt".
+// bcrypt is salting the password as part of hashing. If you're sure you want to pepper,
+// do it to the password prior to passing here.
 package password
 
 import (
@@ -9,36 +12,29 @@ import (
 
 const (
 	passwordHashCost = 12 // OWASP recommends raising this to 12 from the default of 10
-	pepperLen        = 16 // Length of the pepper we're going to use
-	// Suggested max password length. Empirically tested via unit test to be 72 useful bytes (including pepper) with bcrypt.
-	// Should be "72-pepperLen" or less for each byte to actually matter. Ideally at least SOME of the pepper is included
-	// in the password, so try to use less than this number of bytes.
+	// Suggested max password length in bytes. bcrypt only takes into account 72 bytes.
 	MaxPasswordLen = 72
 )
 
-var ErrBadPasswordLength = errors.New("password does not meet length requirements")
+var ErrEmptyPassword = errors.New("password is empty")
 
-// SaltPepperHash applies a salt + pepper to the given password and returns the hash.
-// The pepper is expected to be secret and stored on eg a server machine (NOT in the database)
-// as another layer of security.
+// Hash applies a salt to the given password and returns the hash.
 // Checks against unreasonable length passwords are expected to be done before calling this.
-func SaltPepperHash(givenPass string, pepper []byte) ([]byte, error) {
+func Hash(givenPass string) ([]byte, error) {
 	if len(givenPass) == 0 {
-		return nil, ErrBadPasswordLength
+		return nil, ErrEmptyPassword
 	}
-	pepperedPass := append([]byte(givenPass), pepper...)
 
-	return bcrypt.GenerateFromPassword(pepperedPass, passwordHashCost)
+	return bcrypt.GenerateFromPassword([]byte(givenPass), passwordHashCost)
 }
 
-// IsValidSaltPepperHash returns true if the salt + pepper + password equals the given hash.
+// IsValid returns true if the hashed password equals the given hash.
 // Checks against unreasonable length passwords are expected to be done before calling this.
-func IsValidSaltPepperHash(givenPass string, pepper []byte, hash []byte) bool {
+func IsValid(hash []byte, givenPass string) bool {
 	if len(givenPass) == 0 {
 		return false
 	}
-	pepperedPass := append([]byte(givenPass), pepper...)
 
 	// We're OK if this returns a nil error
-	return bcrypt.CompareHashAndPassword(hash, pepperedPass) == nil
+	return bcrypt.CompareHashAndPassword(hash, []byte(givenPass)) == nil
 }
