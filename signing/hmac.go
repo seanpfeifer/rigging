@@ -6,17 +6,17 @@ import (
 	"crypto/sha256"
 )
 
-// HMACKeySize is the expected size of an HMAC signing key.
+// HMACKeySize is the expected size of an HMAC hashing key.
 const HMACKeySize = 64
 
-// HMACKey is a secret key used for message signing using HMAC+SHA256.
+// HMACKey is a secret key used for message hashing using HMAC+SHA256.
 //
 // I've chosen to use HMAC+SHA256 instead of ed25519 due to the fact that it's more standard and mostly
-// equivalent in other ways for a "secret key signing" use case. This is for when don't need a public key setup
-// to allow others to verify the identity of the signer, just for us to verify that we created the message.
+// equivalent in other ways for a "secret key hashing" use case. This is for when don't need a public key setup
+// to allow others to verify the identity of the hasher, just for us to verify that we created the message.
 type HMACKey [HMACKeySize]byte
 
-func (key *HMACKey) Sign(msg string) []byte {
+func (key *HMACKey) Hash(msg string) []byte {
 	h := hmac.New(sha256.New, key[:])
 	h.Write([]byte(msg))
 	return h.Sum(nil)
