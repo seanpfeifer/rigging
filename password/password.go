@@ -1,3 +1,4 @@
+// Package password contains password hashing + verification functionality.
 package password
 
 import (
@@ -15,6 +16,8 @@ const (
 )
 
 // SaltPepperHash applies a salt + pepper to the given password and returns the hash.
+// The pepper is expected to be secret and stored on eg a server machine (NOT in the database)
+// as another layer of security.
 func SaltPepperHash(givenPass string, pepper []byte) ([]byte, error) {
 	if len(givenPass) > maxPasswordLen || len(givenPass) == 0 {
 		return nil, errors.New("password does not meet length requirements")

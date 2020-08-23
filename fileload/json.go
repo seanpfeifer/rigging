@@ -1,3 +1,4 @@
+// Package fileload contains commonly used file loading functions.
 package fileload
 
 import (
