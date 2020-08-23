@@ -2,6 +2,8 @@ package hashing
 
 import (
 	"testing"
+
+	. "github.com/seanpfeifer/rigging/assert"
 )
 
 const (
@@ -17,19 +19,13 @@ func TestIsValid(t *testing.T) {
 
 	// Reset the timer, since we don't want to time the setup we had to do
 	hash := key.Hash(dataToBeHashed)
-	if len(hash) != expectedHashSize {
-		t.Error("hash not expected length")
-	}
+	ExpectedActual(t, expectedHashSize, len(hash), "hash not expected length")
 
 	verified := key.IsValid(dataToBeHashed, hash)
-	if !verified {
-		t.Error("Failed to verify expected matching hashes")
-	}
+	ExpectedActual(t, true, verified, "matching hashes")
 
 	verified = key.IsValid(dataToBeHashed+"1", hash)
-	if verified {
-		t.Error("Improperly verified differing hashes")
-	}
+	ExpectedActual(t, false, verified, "differing hashes")
 }
 
 func BenchmarkHashHMAC(b *testing.B) {

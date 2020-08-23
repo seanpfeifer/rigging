@@ -3,30 +3,28 @@ package password
 import (
 	"crypto/rand"
 	"testing"
+
+	. "github.com/seanpfeifer/rigging/assert"
 )
 
 func TestPasswordHashing(t *testing.T) {
 	var pepper [pepperLen]byte
 	rand.Read(pepper[:])
 
-	var password [maxPasswordLen]byte
+	var password [MaxPasswordLen]byte
 	rand.Read(password[:])
 
 	hashed, err := SaltPepperHash(string(password[:]), pepper[:])
-	if err != nil {
-		t.Fail()
-	}
+	ExpectedActual(t, nil, err, "hashing password")
 
-	if !IsValidSaltPepperHash(string(password[:]), pepper[:], hashed) {
-		t.Fail()
-	}
+	isValid := IsValidSaltPepperHash(string(password[:]), pepper[:], hashed)
+	ExpectedActual(t, true, isValid, "verifying hash")
 
 	// Change the last byte in the pepper and make sure the password fails.
 	// This was used to empirically test that the max (password + pepper) length for bcrypt is 72.
 	pepper[pepperLen-1] = ^pepper[pepperLen-1]
-	if IsValidSaltPepperHash(string(password[:]), pepper[:], hashed) {
-		t.Fail()
-	}
+	isValid = IsValidSaltPepperHash(string(password[:]), pepper[:], hashed)
+	ExpectedActual(t, false, isValid, "verifying bad hash")
 }
 
 func TestBadPasswordHashing(t *testing.T) {
@@ -34,31 +32,23 @@ func TestBadPasswordHashing(t *testing.T) {
 	rand.Read(pepper[:])
 
 	// Expect a failure if the password is too long for both hashing + validating
-	var badPassword [maxPasswordLen + 1]byte
+	var badPassword [MaxPasswordLen + 1]byte
 	_, err := SaltPepperHash(string(badPassword[:]), pepper[:])
-	// Expect a non-nil error
-	if err == nil {
-		t.Fail()
-	}
+	// Expect a non-nil error (specifically ErrBadPasswordLength)
+	ExpectedActual(t, ErrBadPasswordLength, err, "expecting error for overly long password")
 
 	// Same with a zero-len password
 	_, err = SaltPepperHash("", pepper[:])
-	// Expect a non-nil error
-	if err == nil {
-		t.Fail()
-	}
+	ExpectedActual(t, ErrBadPasswordLength, err, "expecting error for zero-length password")
 
 	hashed, err := SaltPepperHash("random password here", pepper[:])
-	if err != nil {
-		t.Fail()
-	}
+	ExpectedActual(t, nil, err, "hashing password")
 	// Now check inputs on validation.
 	// Too long
-	if IsValidSaltPepperHash(string(badPassword[:]), pepper[:], hashed) {
-		t.Fail()
-	}
+	isValid := IsValidSaltPepperHash(string(badPassword[:]), pepper[:], hashed)
+	ExpectedActual(t, false, isValid, "validating bad long password")
+
 	// Too short
-	if IsValidSaltPepperHash("", pepper[:], hashed) {
-		t.Fail()
-	}
+	isValid = IsValidSaltPepperHash("", pepper[:], hashed)
+	ExpectedActual(t, false, isValid, "validating bad short password")
 }
