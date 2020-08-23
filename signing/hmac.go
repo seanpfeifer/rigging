@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
-	"errors"
 )
 
 // HMACKeySize is the expected size of an HMAC signing key.
@@ -32,12 +31,8 @@ func (key *HMACKey) IsValid(msg string, givenMac []byte) bool {
 
 func NewHMACKey() (HMACKey, error) {
 	var key HMACKey
-	n, err := rand.Read(key[:])
-	if err != nil {
+	if _, err := rand.Read(key[:]); err != nil {
 		return key, err
-	}
-	if n != HMACKeySize {
-		return key, errors.New("could not read full key length from rand")
 	}
 
 	return key, nil
