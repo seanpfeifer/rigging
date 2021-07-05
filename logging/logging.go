@@ -22,3 +22,12 @@ func LogIfError(err error, extraInfo ...interface{}) bool {
 	}
 	return false
 }
+
+// PanicIfError will log the error and panic if it is non-nil.
+// This is useful for errors that require cleanup via `defer`, which will be allowed to occur as
+// the panic bubbles up (typically resulting in the application exiting).
+func PanicIfError(err error, extraInfo ...interface{}) {
+	if err != nil {
+		log.Panic(err, extraInfo)
+	}
+}
