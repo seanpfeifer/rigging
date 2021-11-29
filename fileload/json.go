@@ -1,4 +1,6 @@
 // Package fileload contains commonly used file loading functions.
+// For human-created files (eg, config files), I'd suggest using TOML (https://github.com/BurntSushi/toml),
+// specifically for comment support and improved readability.
 package fileload
 
 import (
