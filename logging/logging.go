@@ -1,5 +1,5 @@
 // Package logging contains very general utility functions for logging.
-// These are meant to be useful only in very basic situations, and use the standard "log" lib.
+// These are meant to be useful only in very basic situations, and they use the standard "log" lib.
 package logging
 
 import "log"

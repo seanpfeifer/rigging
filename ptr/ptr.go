@@ -3,7 +3,7 @@
 // to do a pointer assignment decreases readability.
 //
 // The existence of this is necessary because eg `String() string` doesn't assign the value to an address (var) upon return,
-// so `*val = getString()` tries to get the address of a thing that DOESN'T HAVE ONE - hence a "invalid memory address or nil
+// so `*val = getString()` tries to get the address of a thing that DOESN'T HAVE ONE - hence an "invalid memory address or nil
 // pointer dereference".
 //
 // This was inspired by Stripe's use of similar funcs to fill Protobufs (https://github.com/stripe/stripe-go/blob/7a5549d0ab9528293ab2a8f0f1367674062246af/stripe.go#L877).
