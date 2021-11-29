@@ -3,12 +3,12 @@ package fileload
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 // JSON reads a file at the given location and attempts to unmarshal it as JSON into the given value pointed to by v.
 func JSON(filename string, v interface{}) error {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
