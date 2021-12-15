@@ -9,7 +9,7 @@ import (
 )
 
 // JSON reads a file at the given location and attempts to unmarshal it as JSON into the given value pointed to by v.
-func JSON(filename string, v interface{}) error {
+func JSON(filename string, v any) error {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return err

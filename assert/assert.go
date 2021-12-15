@@ -13,12 +13,12 @@ import (
 
 // The idea here is to accept `*testing.T`, or another impl to be able to test this package itself.
 type Tester interface {
-	Errorf(format string, args ...interface{})
+	Errorf(format string, args ...any)
 }
 
 // ExpectedActual logs a testing error and returns false if the expected and actual values are not equal.
 // Typically you will not need the return value unless you want to stop testing on failure.
-func ExpectedActual(t Tester, expected, actual interface{}, name string) bool {
+func ExpectedActual[T comparable](t Tester, expected, actual T, name string) bool {
 	if expected == actual {
 		return true
 	}

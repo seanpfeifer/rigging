@@ -8,14 +8,14 @@ import (
 
 type testCase struct {
 	Name          string
-	Expected      interface{}
-	Actual        interface{}
+	Expected      any
+	Actual        any
 	Pass          bool
 	loggedMessage string
 	Epsilon       time.Duration // For duration tests
 }
 
-func (t *testCase) Errorf(format string, args ...interface{}) {
+func (t *testCase) Errorf(format string, args ...any) {
 	t.loggedMessage = fmt.Sprintf(format, args...)
 }
 
