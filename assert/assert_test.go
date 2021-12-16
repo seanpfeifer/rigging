@@ -19,6 +19,8 @@ func (t *testCase) Errorf(format string, args ...any) {
 	t.loggedMessage = fmt.Sprintf(format, args...)
 }
 
+func (t *testCase) Helper() {}
+
 func TestExpectedActual(t *testing.T) {
 	a, b := testCase{Name: "a"}, testCase{Name: "b"}
 	var nilCase, nilCase2 *testCase
