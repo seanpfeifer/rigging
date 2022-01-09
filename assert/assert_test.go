@@ -8,15 +8,29 @@ import (
 
 type testCase struct {
 	Name          string
-	Expected      interface{}
-	Actual        interface{}
+	Expected      any
+	Actual        any
 	Pass          bool
 	loggedMessage string
 	Epsilon       time.Duration // For duration tests
 }
 
-func (t *testCase) Errorf(format string, args ...interface{}) {
+func (t *testCase) Errorf(format string, args ...any) {
 	t.loggedMessage = fmt.Sprintf(format, args...)
+}
+
+func (t *testCase) Helper() {}
+
+type person struct {
+	Name string
+	Hat  bool
+}
+
+// wrongPerson has the same contents as person, but is a different type.
+// These are expected to be not equal when compared.
+type wrongPerson struct {
+	Name string
+	Hat  bool
 }
 
 func TestExpectedActual(t *testing.T) {
@@ -43,6 +57,13 @@ func TestExpectedActual(t *testing.T) {
 		{Name: "int64 fail", Expected: int(12), Actual: int64(12), Pass: false},
 		// These are actually the same type, though "12" seems untyped
 		{Name: "int type pass", Expected: 12, Actual: int(12), Pass: true},
+		{Name: "struct pass", Expected: person{"Sean", true}, Actual: person{"Sean", true}, Pass: true},
+		{Name: "struct fail", Expected: person{"Sean", true}, Actual: person{"Sean", false}, Pass: false},
+		// Note that in typical usage this case would fail to even compile due to the types being different, but since we're using
+		// "any" in this slice, this will compile and should fail during test.
+		// eg,
+		//  ExpectedActual(t, person{"Sean", true}, wrongPerson{"Sean", true}, "type test") // fails to compile due to type differences
+		{Name: "struct type", Expected: person{"Sean", true}, Actual: wrongPerson{"Sean", true}, Pass: false},
 	}
 
 	for i, tc := range c {
