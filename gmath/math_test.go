@@ -3,14 +3,14 @@ package gmath
 import (
 	"testing"
 
-	"github.com/seanpfeifer/rigging/assert"
+	. "github.com/seanpfeifer/rigging/assert"
 )
 
 func TestClamp(t *testing.T) {
-	assert.ExpectedActual(t, 0, Clamp(-1, 0, 100), "clamp to min (int)")
-	assert.ExpectedActual(t, 100, Clamp(101, 0, 100), "clamp to max (int)")
-	assert.ExpectedActual(t, 0.0, Clamp(-1.0, 0.0, 1.0), "clamp to min (float)")
-	assert.ExpectedActual(t, 1.0, Clamp(2.0, 0.0, 1.0), "clamp to max (float)")
+	ExpectedActual(t, 0, Clamp(-1, 0, 100), "clamp to min (int)")
+	ExpectedActual(t, 100, Clamp(101, 0, 100), "clamp to max (int)")
+	ExpectedActual(t, 0.0, Clamp(-1.0, 0.0, 1.0), "clamp to min (float)")
+	ExpectedActual(t, 1.0, Clamp(2.0, 0.0, 1.0), "clamp to max (float)")
 }
 
 // Note: You can run these benchmarks with a command like:

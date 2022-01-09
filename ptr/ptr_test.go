@@ -3,7 +3,7 @@ package ptr
 import (
 	"testing"
 
-	"github.com/seanpfeifer/rigging/assert"
+	. "github.com/seanpfeifer/rigging/assert"
 )
 
 type item struct {
@@ -25,9 +25,9 @@ func TestBasic(t *testing.T) {
 	// *verboseItem.Weight = 42.314 // Can't do this! This will panic since Weight is still nil
 	weight := 42.314
 	verboseItem.Weight = &weight
-	assert.ExpectedActual(t, "test", *verboseItem.Name, "name value")
-	assert.ExpectedActual(t, 123, *verboseItem.Age, "age value")
-	assert.ExpectedActual(t, 42.314, *verboseItem.Weight, "weight value")
+	ExpectedActual(t, "test", *verboseItem.Name, "name value")
+	ExpectedActual(t, 123, *verboseItem.Age, "age value")
+	ExpectedActual(t, 42.314, *verboseItem.Weight, "weight value")
 
 	// Here's the func in use
 	conciseItem := item{
@@ -36,7 +36,7 @@ func TestBasic(t *testing.T) {
 	}
 	// ... imagine we have to do some calculations ...
 	conciseItem.Weight = Ptr(42.314)
-	assert.ExpectedActual(t, "test", *conciseItem.Name, "name value")
-	assert.ExpectedActual(t, 123, *conciseItem.Age, "age value")
-	assert.ExpectedActual(t, 42.314, *conciseItem.Weight, "weight value")
+	ExpectedActual(t, "test", *conciseItem.Name, "name value")
+	ExpectedActual(t, 123, *conciseItem.Age, "age value")
+	ExpectedActual(t, 42.314, *conciseItem.Weight, "weight value")
 }
