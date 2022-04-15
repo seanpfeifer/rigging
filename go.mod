@@ -2,6 +2,6 @@ module github.com/seanpfeifer/rigging
 
 go 1.18
 
-require golang.org/x/crypto v0.0.0-20220209195652-db638375bc3a
+require golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 
-require github.com/BurntSushi/toml v1.0.0
+require github.com/BurntSushi/toml v1.1.0
