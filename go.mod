@@ -5,5 +5,4 @@ go 1.18
 require (
 	github.com/BurntSushi/toml v1.1.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
-	golang.org/x/exp v0.0.0-20220414153411-bcd21879b8fd
 )
