@@ -1,7 +1,7 @@
 // Package gmath includes useful math funcs for games, graphics, and GUIs.
 package gmath
 
-import "constraints"
+import "golang.org/x/exp/constraints"
 
 // BasicNumbers is everything that's not a complex number (excludes complex64, complex128)
 type BasicNumbers interface {
