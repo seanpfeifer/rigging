@@ -17,7 +17,7 @@ type Tester interface {
 // ExpectedActual logs a testing error and returns false if the expected and actual values are not equal.
 // Typically you will not need the return value unless you want to stop testing on failure.
 // If you call this within a test utility func, make sure you use `t.Helper()` so you get accurate failure locations.
-func ExpectedActual[T any](t Tester, expected, actual T, name string) bool {
+func ExpectedActual[V any](t Tester, expected, actual V, name string) bool {
 	if reflect.DeepEqual(expected, actual) {
 		return true
 	}
