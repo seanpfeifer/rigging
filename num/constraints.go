@@ -19,3 +19,8 @@ type Unsigned interface {
 type Integer interface {
 	Signed | Unsigned
 }
+
+// Real is everything that's not a complex number (excludes complex64, complex128)
+type Real interface {
+	Integer | Float
+}

@@ -48,7 +48,7 @@ func ExpectedApproxTime(t Tester, expected, actual time.Time, epsilon time.Durat
 // ExpectedApprox logs a testing error and returns false if the expected and actual values are not close.
 // Specifically, if the absolute value of the difference between the two is LARGER than the given "epsilon".
 // Typically you will not need the return value unless you want to stop testing on failure.
-func ExpectedApprox[V num.Integer | num.Float](t Tester, expected, actual, epsilon V, name string) bool {
+func ExpectedApprox[V num.Real](t Tester, expected, actual, epsilon V, name string) bool {
 	delta := getDelta(actual, expected)
 	if delta > epsilon {
 		t.Helper() // Marks this func as a Helper, so this error gets logged at the caller's location
@@ -60,7 +60,7 @@ func ExpectedApprox[V num.Integer | num.Float](t Tester, expected, actual, epsil
 
 // This exists because subtractions for unsigned numbers cannot possibly go negative, so I want to just
 // avoid doing the subtraction. Since this is for testing, relative performance for this isn't a big concern.
-func getDelta[V num.Integer | num.Float](a, b V) V {
+func getDelta[V num.Real](a, b V) V {
 	if a > b {
 		return a - b
 	}
