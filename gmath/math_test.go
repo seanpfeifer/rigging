@@ -25,7 +25,7 @@ func TestLerp(t *testing.T) {
 	// Unsigned is generally a bad idea. Cast to a float instead.
 	ExpectedActual(t, 100, Lerp(uint8(0), 100, 1.0), "uint8 max")
 	ExpectedActual(t, 20, Lerp(uint8(100), 20, 1.0), "uint8 reverse max")
-	// This is a problem when a > b. Instead, cast these to a float!
+	// This is a problem when a > b. Instead, reorder them (ideal) or cast these to a float!
 	// FAIL: ExpectedActual(t, 75, Lerp(uint8(100), 0, 0.25), "uint8 reverse 25%") -> ACTUAL: 139
 	ExpectedActual(t, 75, Lerp(float64(uint8(100)), 0, 0.25), "uint8 reverse 25%")
 }
