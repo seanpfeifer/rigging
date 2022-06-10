@@ -1,4 +1,4 @@
-package gmath
+package num
 
 // Float is a constraint for floating-point types.
 type Float interface {
