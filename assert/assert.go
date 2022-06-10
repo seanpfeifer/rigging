@@ -6,6 +6,8 @@ package assert
 import (
 	"reflect"
 	"time"
+
+	"github.com/seanpfeifer/rigging/num"
 )
 
 // The idea here is to accept `*testing.T`, or another impl to be able to test this package itself.
@@ -34,7 +36,7 @@ func ExpectedActual[V any](t Tester, expected, actual V, name string) bool {
 // Specifically, if the absolute value of the difference between the two is LARGER than the given "epsilon".
 // Typically you will not need the return value unless you want to stop testing on failure.
 func ExpectedApproxTime(t Tester, expected, actual time.Time, epsilon time.Duration, name string) bool {
-	delta := abs(actual.Sub(expected))
+	delta := absDuration(actual.Sub(expected))
 	if delta > epsilon {
 		t.Helper() // Marks this func as a Helper, so this error gets logged at the caller's location
 		t.Errorf(`[%s] Expected: "%s"  Actual: "%s" Delta: %s Tolerance: %s`, name, expected, actual, delta, epsilon)
@@ -43,11 +45,11 @@ func ExpectedApproxTime(t Tester, expected, actual time.Time, epsilon time.Durat
 	return true
 }
 
-// ExpectedApproxDuration logs a testing error and returns false if the expected and actual duration values are not close.
+// ExpectedApprox logs a testing error and returns false if the expected and actual values are not close.
 // Specifically, if the absolute value of the difference between the two is LARGER than the given "epsilon".
 // Typically you will not need the return value unless you want to stop testing on failure.
-func ExpectedApproxDuration(t Tester, expected, actual time.Duration, epsilon time.Duration, name string) bool {
-	delta := abs(actual - expected)
+func ExpectedApprox[V num.Integer | num.Float](t Tester, expected, actual, epsilon V, name string) bool {
+	delta := getDelta(actual, expected)
 	if delta > epsilon {
 		t.Helper() // Marks this func as a Helper, so this error gets logged at the caller's location
 		t.Errorf(`[%s] Expected: "%s"  Actual: "%s" Delta: %s Tolerance: %s`, name, expected, actual, delta, epsilon)
@@ -56,7 +58,17 @@ func ExpectedApproxDuration(t Tester, expected, actual time.Duration, epsilon ti
 	return true
 }
 
-func abs(d time.Duration) time.Duration {
+// This exists because subtractions for unsigned numbers cannot possibly go negative, so I want to just
+// avoid doing the subtraction. Since this is for testing, relative performance for this isn't a big concern.
+func getDelta[V num.Integer | num.Float](a, b V) V {
+	if a > b {
+		return a - b
+	}
+	return b - a
+}
+
+// This is explicitly to support time.Time delta
+func absDuration(d time.Duration) time.Duration {
 	if d < 0 {
 		return -d
 	}
