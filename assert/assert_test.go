@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 	"time"
+
+	"github.com/seanpfeifer/rigging/num"
 )
 
 type testCase struct {
@@ -12,7 +14,6 @@ type testCase struct {
 	Actual        any
 	Pass          bool
 	loggedMessage string
-	Epsilon       time.Duration // For duration tests
 }
 
 func (t *testCase) Errorf(format string, args ...any) {
@@ -74,9 +75,24 @@ func TestExpectedActual(t *testing.T) {
 	}
 }
 
+type testCaseApprox[T any, V num.Integer | num.Float] struct {
+	Name          string
+	Expected      T
+	Actual        T
+	Pass          bool
+	loggedMessage string
+	Epsilon       V
+}
+
+func (t *testCaseApprox[T, V]) Errorf(format string, args ...any) {
+	t.loggedMessage = fmt.Sprintf(format, args...)
+}
+
+func (t *testCaseApprox[T, V]) Helper() {}
+
 func TestExpectedApproxTime(t *testing.T) {
 	t1, t2 := time.Unix(1593934208, 12), time.Unix(1593934208, 12)
-	c := []testCase{
+	c := []testCaseApprox[time.Time, time.Duration]{
 		// Exactness, with 0 epsilon
 		{Name: "same time struct", Expected: t1, Actual: t1, Pass: true},
 		{Name: "same time", Expected: t1, Actual: t2, Pass: true},
@@ -91,7 +107,7 @@ func TestExpectedApproxTime(t *testing.T) {
 	}
 
 	for i, tc := range c {
-		pass := ExpectedApproxTime(&tc, tc.Expected.(time.Time), tc.Actual.(time.Time), tc.Epsilon, tc.Name)
+		pass := ExpectedApproxTime(&tc, tc.Expected, tc.Actual, tc.Epsilon, tc.Name)
 		if pass != tc.Pass {
 			t.Errorf(`[%d] %s failed: "%s"`, i, tc.Name, tc.loggedMessage)
 		}
@@ -100,7 +116,7 @@ func TestExpectedApproxTime(t *testing.T) {
 
 func TestExpectedApproxDuration(t *testing.T) {
 	d := time.Millisecond * 12
-	c := []testCase{
+	c := []testCaseApprox[time.Duration, time.Duration]{
 		// Exactness, with 0 epsilon
 		{Name: "same duration", Expected: d, Actual: time.Millisecond * 12, Pass: true},
 		// Test cases for the actual time being in the future
@@ -114,7 +130,30 @@ func TestExpectedApproxDuration(t *testing.T) {
 	}
 
 	for i, tc := range c {
-		pass := ExpectedApproxDuration(&tc, tc.Expected.(time.Duration), tc.Actual.(time.Duration), tc.Epsilon, tc.Name)
+		pass := ExpectedApprox(&tc, tc.Expected, tc.Actual, tc.Epsilon, tc.Name)
+		if pass != tc.Pass {
+			t.Errorf(`[%d] %s failed: "%s"`, i, tc.Name, tc.loggedMessage)
+		}
+	}
+}
+
+func TestExpectedApprox(t *testing.T) {
+	f1 := 0.15
+	c := []testCaseApprox[float64, float64]{
+		// Exactness, with 0 epsilon
+		{Name: "same value", Expected: f1, Actual: 0.15, Pass: true},
+		// Test cases for the actual time being in the future
+		{Name: "add smaller delta", Expected: f1, Actual: f1 + 0.2, Pass: true, Epsilon: 0.3},
+		{Name: "add border delta", Expected: f1, Actual: f1 + 0.3, Pass: true, Epsilon: 0.3},
+		{Name: "add larger delta", Expected: f1, Actual: f1 + 0.4, Pass: false, Epsilon: 0.3},
+		// Test cases for the actual time being in the past
+		{Name: "sub smaller delta", Expected: f1, Actual: f1 - 0.2, Pass: true, Epsilon: 0.3},
+		{Name: "sub border delta", Expected: f1, Actual: f1 - 0.3, Pass: true, Epsilon: 0.3},
+		{Name: "sub larger delta", Expected: f1, Actual: f1 - 0.4, Pass: false, Epsilon: 0.3},
+	}
+
+	for i, tc := range c {
+		pass := ExpectedApprox(&tc, tc.Expected, tc.Actual, tc.Epsilon, tc.Name)
 		if pass != tc.Pass {
 			t.Errorf(`[%d] %s failed: "%s"`, i, tc.Name, tc.loggedMessage)
 		}

@@ -1,4 +1,4 @@
-package gmath
+package num
 
 // Float is a constraint for floating-point types.
 type Float interface {
@@ -18,4 +18,9 @@ type Unsigned interface {
 // Integer is a constraint for all integer types.
 type Integer interface {
 	Signed | Unsigned
+}
+
+// Real is everything that's not a complex number (excludes complex64, complex128)
+type Real interface {
+	Integer | Float
 }
