@@ -1,5 +1,6 @@
 // Package hashing contains simple hashing functionality. This is NOT meant for passwords, but
 // rather for simply verifying the integrity of a message using a secret.
+//
 // Note this does not allow for any other party to verify authenticity of a message, as the
 // secret should not be shared.
 package hashing

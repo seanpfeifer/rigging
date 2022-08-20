@@ -12,8 +12,9 @@ import (
 
 // JSON reads a file at the given location and attempts to unmarshal it as JSON with the given type.
 // The generic type adds more convenience so you can simplify file loading down to something like:
-//   cfg, err := fileload.JSON[ServiceCfg]("cfg.json")
-//   logging.FatalIfError(err, "loading service config")
+//
+//	cfg, err := fileload.JSON[ServiceCfg]("cfg.json")
+//	logging.FatalIfError(err, "loading service config")
 //
 // ie, this saves you a line of explicitly declaring a var, because we'll declare it and return a pointer here.
 func JSON[T any](filename string) (*T, error) {

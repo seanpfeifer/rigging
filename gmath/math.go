@@ -15,6 +15,7 @@ func Clamp[N num.Real](val, min, max N) N {
 
 // Lerp linearly interpolates between a and b using t. t is clamped between 0.0 and 1.0.
 // eg, when t is 0.0, this returns a. When t is 1.0 this returns b. When t is 0.5 this returns the midpoint between a and b.
+//
 // NOTE: Lerping unsigned values requires extra care - there may be unexpected results when a > b.
 // Suggest ordering [a, b] such that a <= b, or casting to a float prior to calling this function.
 func Lerp[N num.Real, F num.Float](a, b N, t F) N {

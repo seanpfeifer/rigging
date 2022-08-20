@@ -1,5 +1,6 @@
 // Package password contains password hashing + verification functionality.
 // TLDR; "just use bcrypt".
+//
 // bcrypt is salting the password as part of hashing. If you're sure you want to pepper,
 // do it to the password prior to passing here.
 package password

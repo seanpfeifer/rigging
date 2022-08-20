@@ -2,8 +2,8 @@
 // These are meant to be useful only in very basic situations, and they use the standard "log" lib.
 //
 // Examples of use cases for this:
-// * Small scripts without the need for complex logging (eg, Advent of Code)
-// * Prior to setting up your actual log system (eg, failure to set up remote logging)
+//   - Small scripts without the need for complex logging (eg, Advent of Code)
+//   - Prior to setting up your actual log system (eg, failure to set up remote logging)
 package logging
 
 import "log"
