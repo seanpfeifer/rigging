@@ -21,14 +21,14 @@ const HMACKeySize = 64
 // to allow others to verify the identity of the hasher, just for us to verify that we created the message.
 type HMACKey [HMACKeySize]byte
 
-// Hash returns the SHA256 hash of the bytes in the given message using our key.
+// Hash returns the SHA256 hash of the bytes in the given message, calculated using our key.
 func (key *HMACKey) Hash(msg string) []byte {
 	h := hmac.New(sha256.New, key[:])
 	h.Write([]byte(msg))
 	return h.Sum(nil)
 }
 
-// IsValid returns true if the givenMac bytes are a valid hash of the bytes in msg, using our key.
+// IsValid returns true if the givenMac bytes are a valid hash of the bytes in msg, calculated using our key.
 func (key *HMACKey) IsValid(msg string, givenMac []byte) bool {
 	h := hmac.New(sha256.New, key[:])
 	h.Write([]byte(msg))
