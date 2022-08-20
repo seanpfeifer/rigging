@@ -24,6 +24,8 @@ package ptr
 // Ptr returns a type-safe reference to a variable with the given value.
 // This should be used only in cases where you have to assign a pointer to a reference of a primitive literal,
 // and want a simple one-liner (eg assigning to struct members).
-// If you can simply do `x := &v`, then do that instead of using this func.
-// This replaces all other previous pointer functions in one generic func for all types.
+//
+// If you can simply do
+// 	x := &v
+// then do that instead of using this func.
 func Ptr[T any](v T) *T { return &v }

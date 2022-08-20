@@ -21,12 +21,14 @@ const HMACKeySize = 64
 // to allow others to verify the identity of the hasher, just for us to verify that we created the message.
 type HMACKey [HMACKeySize]byte
 
+// Hash returns the SHA256 hash of the bytes in the given message using our key.
 func (key *HMACKey) Hash(msg string) []byte {
 	h := hmac.New(sha256.New, key[:])
 	h.Write([]byte(msg))
 	return h.Sum(nil)
 }
 
+// IsValid returns true if the givenMac bytes are a valid hash of the bytes in msg, using our key.
 func (key *HMACKey) IsValid(msg string, givenMac []byte) bool {
 	h := hmac.New(sha256.New, key[:])
 	h.Write([]byte(msg))
@@ -34,6 +36,10 @@ func (key *HMACKey) IsValid(msg string, givenMac []byte) bool {
 	return hmac.Equal(givenMac, result)
 }
 
+// NewHMACKey creates a new cryptographically random HMAC key with HMACKeySize bytes.
+//
+// You typically will want to store the output of this and use it repeatedly, hashing messages that you send out
+// and checking validity when returned to you.
 func NewHMACKey() (HMACKey, error) {
 	var key HMACKey
 	if _, err := rand.Read(key[:]); err != nil {
