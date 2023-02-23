@@ -13,17 +13,22 @@ import (
 
 const (
 	passwordHashCost = 12 // OWASP recommends raising this to 12 from the default of 10
-	// Suggested max password length in bytes. bcrypt only takes into account 72 bytes.
+	// Max password length in bytes. bcrypt only takes into account 72 bytes, and will error if given more.
 	MaxPasswordLen = 72
 )
 
-var ErrEmptyPassword = errors.New("password is empty")
+var ErrPasswordEmpty = errors.New("password is empty")
+var ErrPasswordTooLong = errors.New("password length exceeds 72 bytes")
 
 // Hash applies a salt to the given password and returns the hash.
-// Checks against unreasonable length passwords are expected to be done before calling this.
+// This will return ErrPasswordTooLong if the password is longer than MaxPasswordLen,
+// and ErrPasswordEmpty if the password is empty.
 func Hash(givenPass string) ([]byte, error) {
 	if len(givenPass) == 0 {
-		return nil, ErrEmptyPassword
+		return nil, ErrPasswordEmpty
+	}
+	if len(givenPass) > MaxPasswordLen {
+		return nil, ErrPasswordTooLong
 	}
 
 	return bcrypt.GenerateFromPassword([]byte(givenPass), passwordHashCost)
@@ -31,6 +36,8 @@ func Hash(givenPass string) ([]byte, error) {
 
 // IsValid returns true if the hashed password equals the given hash.
 // Checks against unreasonable length passwords are expected to be done before calling this.
+// For backwards compatibility, this will not error if the given password is too long, and
+// only operates on the first 72 bytes of givenPass.
 func IsValid(hash []byte, givenPass string) bool {
 	if len(givenPass) == 0 {
 		return false
