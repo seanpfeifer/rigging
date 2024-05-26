@@ -3,6 +3,6 @@ module github.com/seanpfeifer/rigging
 go 1.21
 
 require (
-	github.com/BurntSushi/toml v1.3.2
-	golang.org/x/crypto v0.17.0
+	github.com/BurntSushi/toml v1.4.0
+	golang.org/x/crypto v0.23.0
 )
