@@ -4,5 +4,5 @@ go 1.21
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	golang.org/x/crypto v0.23.0
+	golang.org/x/crypto v0.31.0
 )
