@@ -7,8 +7,7 @@ import (
 )
 
 func TestRandom(t *testing.T) {
-	id, err := NewRandom()
-	ExpectedActual(t, nil, err, "new random")
+	id := NewRandom()
 	str := id.String()
 	ExpectedActual(t, 32, len(str), "hex string length")
 }
