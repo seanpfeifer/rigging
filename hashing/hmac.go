@@ -38,13 +38,13 @@ func (key *HMACKey) IsValid(msg string, givenMac []byte) bool {
 
 // NewHMACKey creates a new cryptographically random HMAC key with HMACKeySize bytes.
 //
-// You typically will want to store the output of this and use it repeatedly, hashing messages that you send out
+// You typically will want to store the output of this (the generated key) and use it repeatedly, hashing messages that you send out
 // and checking validity when returned to you.
-func NewHMACKey() (HMACKey, error) {
+func NewHMACKey() HMACKey {
 	var key HMACKey
-	if _, err := rand.Read(key[:]); err != nil {
-		return key, err
-	}
+	//  This cannot error, and will crash the program irrecoverably if an error is returned, per Go 1.24 crypto/rand.Read().
+	// crypto/rand.Read() will ALWAYS fill the buffer and not return an error, so I'm intentionally ignoring both return values here
+	_, _ = rand.Read(key[:])
 
-	return key, nil
+	return key
 }

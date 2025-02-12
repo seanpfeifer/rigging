@@ -12,10 +12,7 @@ const (
 )
 
 func TestIsValid(t *testing.T) {
-	key, err := NewHMACKey()
-	if err != nil {
-		t.FailNow()
-	}
+	key := NewHMACKey()
 
 	// Reset the timer, since we don't want to time the setup we had to do
 	hash := key.Hash(dataToBeHashed)
@@ -29,10 +26,7 @@ func TestIsValid(t *testing.T) {
 }
 
 func BenchmarkHashHMAC(b *testing.B) {
-	key, err := NewHMACKey()
-	if err != nil {
-		b.FailNow()
-	}
+	key := NewHMACKey()
 
 	// Reset the timer, since we don't want to time the setup we had to do
 	b.ResetTimer()
@@ -42,10 +36,7 @@ func BenchmarkHashHMAC(b *testing.B) {
 }
 
 func BenchmarkVerifyHMAC(b *testing.B) {
-	key, err := NewHMACKey()
-	if err != nil {
-		b.FailNow()
-	}
+	key := NewHMACKey()
 	hash := key.Hash(dataToBeHashed)
 
 	// Reset the timer, since we don't want to time the setup we had to do

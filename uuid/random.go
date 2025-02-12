@@ -3,7 +3,6 @@ package uuid
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"io"
 )
 
 // RandomID is a random 16 byte ID. This is similar to a random UUID (RFC 4122), except it lacks the formatting and is
@@ -12,12 +11,15 @@ import (
 // If you want something that abides by RFC 4122, use https://github.com/google/uuid
 type RandomID [16]byte
 
-// NewRandom returns a new random ID, or an error if we fail to read from crypto/rand.
-func NewRandom() (RandomID, error) {
+// NewRandom returns a new random ID.
+// It can never error, and crashes the program irrecoverably if an error is returned, per Go 1.24 crypto/rand.Read().
+// This crash will only happen on legacy Linux systems (prior to verison 3.17). See https://github.com/golang/go/issues/66821
+func NewRandom() RandomID {
 	var id RandomID
-	_, err := io.ReadFull(rand.Reader, id[:])
+	// crypto/rand.Read() will ALWAYS fill the buffer and not return an error, so I'm intentionally ignoring both return values here
+	_, _ = rand.Read(id[:])
 
-	return id, err
+	return id
 }
 
 // String returns the RandomID as a 32-character hex string, with no separators.
