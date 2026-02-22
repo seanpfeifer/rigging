@@ -4,13 +4,13 @@ package gmath
 import "github.com/seanpfeifer/rigging/num"
 
 // Clamp will return the value clamped between min and max, inclusive.
-func Clamp[N num.Real](val, min, max N) N {
-	// This is significantly faster (~85% as of Go 1.26.0) than `min(max(val, minVal), maxVal)`, so we're going to
+func Clamp[N num.Real](val, minVal, maxVal N) N {
+	// This is significantly faster (~56% as of Go 1.26.0) than `min(max(val, minVal), maxVal)`, so we're going to
 	// keep providing this function and use this implementation of it.
-	if val < min {
-		return min
-	} else if val > max {
-		return max
+	if val < minVal {
+		return minVal
+	} else if val > maxVal {
+		return maxVal
 	}
 	return val
 }
