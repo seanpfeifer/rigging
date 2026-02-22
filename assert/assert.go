@@ -52,7 +52,7 @@ func ExpectedApprox[V num.Real](t Tester, expected, actual, epsilon V, name stri
 	delta := getDelta(actual, expected)
 	if delta > epsilon {
 		t.Helper() // Marks this func as a Helper, so this error gets logged at the caller's location
-		t.Errorf(`[%s] Expected: "%s"  Actual: "%s" Delta: %s Tolerance: %s`, name, expected, actual, delta, epsilon)
+		t.Errorf(`[%s] Expected: "%+v"  Actual: "%+v" Delta: %+v Tolerance: %+v`, name, expected, actual, delta, epsilon)
 		return false
 	}
 	return true
