@@ -28,9 +28,7 @@ func TestIsValid(t *testing.T) {
 func BenchmarkHashHMAC(b *testing.B) {
 	key := NewHMACKey()
 
-	// Reset the timer, since we don't want to time the setup we had to do
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		key.Hash(dataToBeHashed)
 	}
 }
@@ -39,9 +37,7 @@ func BenchmarkVerifyHMAC(b *testing.B) {
 	key := NewHMACKey()
 	hash := key.Hash(dataToBeHashed)
 
-	// Reset the timer, since we don't want to time the setup we had to do
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		key.IsValid(dataToBeHashed, hash)
 	}
 }
